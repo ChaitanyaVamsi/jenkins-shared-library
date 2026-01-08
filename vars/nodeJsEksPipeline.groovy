@@ -11,8 +11,8 @@ def call(Map config){
 
           environment{
             COURSE = "Jenkins"
-            PROJECT = "roboshop"
-            COMPONENT = "catalogue"
+            PROJECT = config.get("project")
+            COMPONENT = config.get("component")
             appVersion = ""
             ACC_ID = "471112667143"
           }
