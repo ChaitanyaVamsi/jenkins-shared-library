@@ -168,7 +168,11 @@ def call(Map config){
                 script{
                   build job:'catalogue-deploy',
                   wait: false,
-                  propogate: false
+                  propogate: false,
+                  parameters: [
+                      string(name: 'appVersion', value:"${appVersion}"),
+                       string(name: 'deployTo', value:"dev"),
+                  ]
                 }
               }
             }
