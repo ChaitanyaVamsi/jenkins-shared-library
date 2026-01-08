@@ -163,6 +163,15 @@ def call(Map config){
               }
             }
 
+            stage('Trigger Dev catalogue-deploy'){
+              steps{
+                script{
+                  build job:'catalogue-deploy'
+                  wait: false,
+                  propogate: false
+                }
+              }
+            }
           }
     }
 }
