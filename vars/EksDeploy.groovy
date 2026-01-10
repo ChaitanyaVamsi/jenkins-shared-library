@@ -10,7 +10,7 @@ def call(Map config){
           PROJECT   = config.get("project")       // Project name (used in EKS cluster naming)
           COMPONENT = config.get("component")    // Application / microservice name
           REGION    = "us-east-1"               // AWS region where EKS clusters exist
-          DEPLOY_TO =  config.get("deploy_to")
+          DEPLOY_TO =  config.get("deployTo")
         }
 
         options {
@@ -18,7 +18,7 @@ def call(Map config){
           disableConcurrentBuilds()            // Prevent multiple builds of this job at the same time
         }
 
-        parameters {
+        /* parameters {
 
           // Application version to deploy (example: 1.0.3, latest, commit-id)
           string(
@@ -26,25 +26,24 @@ def call(Map config){
             description: 'Which app version you want to deploy'
           )
 
-          /*
-          * deploy_to parameter:
-          * --------------------
-          * This selects the TARGET ENVIRONMENT / EKS CLUSTER.
-          *
-          * dev  -> roboshop-dev  EKS cluster
-          * qa   -> roboshop-qa   EKS cluster
-          * prod -> roboshop-prod EKS cluster
-          *
-          * NOTE:
-          * This parameter DOES NOT select a Git branch.
-          * It is only used to decide which Kubernetes cluster Jenkins connects to.
-          */
+
+          // * This selects the TARGET ENVIRONMENT / EKS CLUSTER.
+          // *
+          // * dev  -> roboshop-dev  EKS cluster
+          // * qa   -> roboshop-qa   EKS cluster
+          // * prod -> roboshop-prod EKS cluster
+          // *
+          // * NOTE:
+          // * This parameter DOES NOT select a Git branch.
+          // * It is only used to decide which Kubernetes cluster Jenkins connects to.
+
           choice(
             name: 'deploy_to',
             choices: ['dev', 'qa', 'prod'],
             description: 'Select which EKS cluster to connect to'
           )
         }
+         */
 
         stages{
           stage('Deploy'){
@@ -52,7 +51,7 @@ def call(Map config){
               script{
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                       sh """
-                        aws eks update-kubeconfig --region ${REGION} --name ${PROJECT}-${params.deploy_to}
+                        aws eks update-kubeconfig --region ${REGION} --name ${PROJECT}-${params.DEPLOY_TO}
                         kubectl get nodes
                       """
                 }
