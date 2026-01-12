@@ -25,8 +25,7 @@ def call(Map config){
             stage('Read Version'){
                 steps{
                   script{
-                     def pom = readMavenPom file: 'pom.xml'
-                        appVersion = pom.version
+                        appVersion = readFile(file: 'version')
                         echo "app version: ${appVersion}"
                   }
                 }
@@ -36,7 +35,7 @@ def call(Map config){
                 steps{
                   script{
                       sh """
-                          mvn clean package
+                          pip3 install -r requirements.txt
                       """
                   }
                 }
@@ -104,20 +103,22 @@ def call(Map config){
           }
 
            post{
-                always{
-                        echo 'I will always say Hello again!'
-                        cleanWs()
-                    }
-                    success {
-                        echo 'I will run if success'
-                    }
-                    failure {
-                        echo 'I will run if failure'
-                    }
-                    aborted {
-                        echo 'pipeline is aborted'
-                    }
-              }
+                  always{
+                          echo 'I will always say Hello again!'
+                          cleanWs()
+                      }
+                      success {
+                          echo 'I will run if success'
+                      }
+                      failure {
+                          echo 'I will run if failure'
+                      }
+                      aborted {
+                          echo 'pipeline is aborted'
+                      }
+                }
 
       }
+
+
 }

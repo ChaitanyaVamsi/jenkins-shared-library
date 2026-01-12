@@ -5,8 +5,7 @@ def call(Map config){
         agent any
           // agent{
           //   node{
-          //     label 'slave'
-          //   }
+          //     label 'slave' // roboshop-node app server
           // }
 
           environment{
@@ -177,5 +176,21 @@ def call(Map config){
               }
             }
           }
+
+          post{
+                always{
+                        echo 'I will always say Hello again!'
+                        cleanWs()
+                    }
+                    success {
+                        echo 'I will run if success'
+                    }
+                    failure {
+                        echo 'I will run if failure'
+                    }
+                    aborted {
+                        echo 'pipeline is aborted'
+                    }
+              }
     }
 }
