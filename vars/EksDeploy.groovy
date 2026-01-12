@@ -47,19 +47,32 @@ def call(Map config){
 
         stages{
           stage('Deploy'){
-            steps{
-              script{
-                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                      sh """
-                        set -e
-                        aws eks update-kubeconfig --region ${REGION} --name ${PROJECT}-${DEPLOY_TO}
-                        kubectl get nodes
-                        sed -i "s/IMAGE_VERSION/${appVersion}/g" values.yaml
-                        helm upgrade --install ${COMPONENT} -f values-${DEPLOY_TO} -n ${PROJECT} --atomic --timeout=5m .
-                      """
-                }
-              }
+                          steps{
+                            script{
+                              withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                                    sh """
+                                      set -e
+                                      aws eks update-kubeconfig --region ${REGION} --name ${PROJECT}-${DEPLOY_TO}
+                                      kubectl get nodes
+                                      sed -i "s/IMAGE_VERSION/${appVersion}/g" values.yaml
+                                      helm upgrade --install ${COMPONENT} -f values-${DEPLOY_TO} -n ${PROJECT} --atomic --timeout=5m .
+                                    """
+                              }
+                            }
+                          }
+                      }
+
+          stage('Functiona Testing'){
+            when{
+              expression { DEPLOY_TO == "dev" }
             }
+                  steps{
+                    script{
+                      sh """
+                            echo "functional Testing "
+                      """
+                    }
+                  }
           }
         }
 
