@@ -3,6 +3,11 @@ def call(Map config){
 
           agent any
 
+          // agent{
+          //   node{
+          //     label 'slave' // roboshop-java app server
+          // }
+
           environment{
             appVersion = ""
             ACC_ID = "471112667143"
