@@ -11,10 +11,10 @@ def call(Map config){
 
           environment{
             COURSE = "Jenkins"
-            PROJECT = config.get("project")
-            COMPONENT = config.get("component")
             appVersion = ""
             ACC_ID = "471112667143"
+            PROJECT = config.get("project")
+            COMPONENT = config.get("component")
           }
 
           options{
@@ -25,13 +25,13 @@ def call(Map config){
           stages{
             // need a plugin for this - Pipeline Utility Steps
 
-            stage('Git Checkout'){
+            /* stage('Git Checkout'){
 
               steps{
               git branch: 'main', url: ' https://github.com/ChaitanyaVamsi/jenkins-catalogue.git '
               }
-            }
-            stage ('Display Version'){
+            } */
+            stage ('Read Version'){
                 steps{
                   script{
                     def packageJSON = readJSON file: 'package.json'

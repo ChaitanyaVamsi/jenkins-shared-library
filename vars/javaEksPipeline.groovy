@@ -1,0 +1,102 @@
+def call(Map config){
+      pipeline{
+
+          agent any
+
+          environment{
+            appVersion = ""
+            ACC_ID = "471112667143"
+            PROJECT = config.get("project")
+            COMPONENT = config.get("component")
+          }
+
+          options{
+            timeout(time:30, unit:'MINUTES')
+            disableConcurrentBuilds()
+          }
+
+          stages{
+
+            stage('Read Version'){
+                steps{
+                  script{
+                     def pom = readMavenPom file: 'pom.xml'
+                        appVersion = pom.version
+                        echo "app version: ${appVersion}"
+                  }
+                }
+            }
+
+            stage('Install Dependencies'){
+                steps{
+                  script{
+                      sh """
+                          mvn clean package
+                      """
+                  }
+                }
+            }
+
+            stage('unit Test'){
+                steps{
+                  script{
+                      sh """
+                            echo test
+                      """
+                  }
+                }
+
+            }
+
+            stage('Build Image'){
+                steps{
+                    script{
+                        withAWS(region:'us-east-1',credentials:'aws-creds'){
+                          sh """
+                            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+                            docker build -t ${PROJECT}/${COMPONENT}:${appVersion} .
+                            docker tag ${PROJECT}/${COMPONENT}:${appVersion} ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
+                            docker images
+                            docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
+                          """
+                        }
+                    }
+                }
+            }
+
+            stage('Trivy Scan'){
+                steps{
+                    script{
+                        sh """
+                      trivy image \
+                                --scanners vuln \
+                                --severity HIGH,CRITICAL,MEDIUM \
+                                --pkg-types os \
+                                --exit-code 1 \
+                                --format table \
+                                --no-progress \
+                                ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
+                            """
+                    }
+                }
+            }
+
+            stage('Trigger Dev Deploy'){
+              steps{
+                script{
+                  build job:"../${COMPONENT}-deploy",
+                  wait: false,
+                  propogate: false,
+                  parameters: [
+                    string(name: 'appVersion', value:"${appVersion}")
+                    string(name: 'deployTo', value:"dev")
+                  ]
+                }
+              }
+            }
+
+
+          }
+
+      }
+}
