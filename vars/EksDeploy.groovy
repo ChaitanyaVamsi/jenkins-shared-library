@@ -55,7 +55,7 @@ def call(Map config){
                                       aws eks update-kubeconfig --region ${REGION} --name ${PROJECT}-${DEPLOY_TO}
                                       kubectl get nodes
                                       sed -i "s/IMAGE_VERSION/${appVersion}/g" values.yaml
-                                      helm upgrade --install ${COMPONENT} -f values-${DEPLOY_TO} -n ${PROJECT} --atomic --timeout=5m .
+                                      helm upgrade --install ${COMPONENT} -f values-${DEPLOY_TO}.yaml -n ${PROJECT} --atomic --timeout=5m .
                                     """
                               }
                             }
