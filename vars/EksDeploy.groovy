@@ -10,7 +10,7 @@ def call(Map config){
           PROJECT   = config.get("project")       // Project name (used in EKS cluster naming)
           COMPONENT = config.get("component")    // Application / microservice name
           REGION    = "us-east-1"               // AWS region where EKS clusters exist
-          DEPLOY_TO =  config.get("deployTo")
+          DEPLOY_TO =  config.get("deploy_to")
         }
 
         options {
