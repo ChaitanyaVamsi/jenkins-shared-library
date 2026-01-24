@@ -94,7 +94,7 @@ def call(Map config){
                   wait: false,
                   propogate: false,
                   parameters: [
-                    string(name: 'appVersion', value:"${appVersion}")
+                    string(name: 'appVersion', value:"${appVersion}"),
                     string(name: 'deployTo', value:"dev")
                   ]
                 }
