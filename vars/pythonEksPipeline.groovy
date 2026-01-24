@@ -35,9 +35,13 @@ def call(Map config){
             stage('Install Dependencies'){
                 steps{
                   script{
-                      sh """
-                          pip install -r requirements.txt
-                      """
+                      sh '''
+                          apt-get update && apt-get install -y python3-venv build-essential git
+                    python3 -m venv .venv
+                    . .venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                      '''
                   }
                 }
             }
