@@ -36,7 +36,7 @@ def call(Map config){
                 steps{
                   script{
                       sh """
-                          pip3 install -r requirements.txt
+                          pip install -r requirements.txt
                       """
                   }
                 }
